@@ -11,12 +11,12 @@
 	storage json format: 
 	Eventually account save previous versions/ states of a session
 
-	{	'unique id' or current: 
+	{	'unique id' or : provisionary
 		{
 			name: 'name',
 			windows: [
-				{'url', 'url', 'url'},
-				{'url', 'url', 'url'}
+				['url', 'url', 'url'],
+				['url', 'url', 'url']
 			],
 			notes: 'text',
 			color: 'hex color',
@@ -29,7 +29,7 @@
 
 	{ 
 		settings: {
-			currentSession: "id" or NULL,
+			currentSession: "id" or NULL, -> NULL refers to no session currently open
 			autoSave: true or false 
 		}
 	}
@@ -50,6 +50,8 @@ chrome.tabs.onRemoved.addListener(updateCurrentSession);
 
 chrome.windows.onRemoved.addListener(updateCurrentSession);
 chrome.windows.onCreated.addListener(updateCurrentSession);
+
+chrome.runtime.onInstalled.addListener(init);
 chrome.runtime.onStartup.addListener(init);
 /*
 	listen for:
@@ -68,15 +70,44 @@ function init() {
  			result = result.settings;
  			console.log(result);
  			console.log("Initialized!");
- 			/* update */
+ 			//create provisionary
+ 			var provisionary = {
+ 				name: "provisionary",
+ 				windows: [],
+ 				notes: '',
+ 				color: "#90AFC5",
+ 				created: new Date(),
+ 				lastUpdate: new Date()
+ 			}
+ 			chrome.storage.local.set({provisionary: provisionary}, function() {
+ 				/* update current session entry in chrome.storage */
+ 				updateCurrentSession();
+ 			})
  		});
 	});
 }
-function updateCurrentSession() {
+/* 
+	manual is boolean value telling function to bypass autoSave
+	this should occur when a user saves their session using the popup
+*/
+function updateCurrentSession(manual) {
 	console.log("time to update temporary session and/or currentSession");
 	//if autosave is true then get currentSession, query tabs and save to storage
-	chrome.windows.getAll({populate: true}, function(windows) {
-		console.log(windows);
+	chrome.windows.getAll({populate: true}, function(result) {
+
+		var windows = [];
+		for(var i=0; i < result.length; i++) {
+			windows.push(new Array());
+			for(var j=0; j < result[i].tabs.length; j++) {
+				if(result[i].tabs[j].url)  windows[i].push(result[i].tabs[j].url);
+			}
+		}
+		/* update provisionary and/or currentSession */
+		chrome.storage.local.get({provisionary: {}, settings: {}}, function(result) {
+			var provisionary = result.provisionary;
+			var settings = result.settings;
+			/* if autoSave is true & currentSession is not null */
+		});
 	})
 }
 
