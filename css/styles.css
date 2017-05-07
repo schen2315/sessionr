@@ -1,0 +1,199 @@
+/*:root {
+	--nav-color: #2A3132;
+	--block-color: #90AFC5;
+};*/
+html,
+body {
+	width: 100%;
+}
+@media all and (min-width: 750px) {
+	
+	.grid-stack {
+		top: 50px;
+		width: 900px;
+	}
+	/*.grid-stack-item[data-gs-width="3"]  { width: 300px }*/
+	div.session-name {
+		width: 100%;
+		-webkit-appearance:none;
+		background: url(http://i.stack.imgur.com/ynxjD.png) repeat-y;
+		line-height: 25px;
+		/*border: solid 1px #ddd;*/
+		outline:0px !important;
+		text-align: center;
+	}
+	div.session-name > span {
+		font: normal 18px verdana;
+	}
+	div.notes {
+		/*width: 400px;*/
+		width: 0px;
+		position: fixed;
+		height: 100%;
+		/*background-color: #763626;*/	
+		right: 0%;
+		z-index: 5;
+	}
+	.fa:hover {
+		color: #489fdf;
+		cursor: pointer;
+	}
+	div.plus {
+		position: fixed;
+		right: 5%;
+		bottom: 5%;
+		z-index: 10;
+		cursor: pointer;
+		color: #489fdf;
+		opacity: 0.5;
+		-webkit-transition:opacity 0.3s;
+		transition:opacity 0.3s;
+	}
+	div.plus:hover {
+		color: #489fdf;
+		opacity: 1.0;
+	}
+	div.cog {
+		position: fixed;
+		left: 5%;
+		bottom: 5%;
+		z-index: 10;
+		color: #489fdf;
+		opacity: 0.5;
+		-webkit-transition:opacity 0.3s;
+		transition:opacity 0.3s;
+	}
+	div.cog:hover {
+		color: #489fdf;
+		opacity: 1.0;
+	}
+
+	div.open-icon,
+	div.trash-icon,
+	div.pen-icon {
+		position: absolute;
+		top: 2%;
+		right: 0%;
+		color: #2A3132;
+		opacity: 0.0;
+		-webkit-transition:opacity 0.4s;
+		transition:opacity 0.4s;
+	}
+	div.trash-icon {
+		top: 2%;
+		right: 0%;
+	}
+	div.pen-icon {
+		top: 2%;
+		right: 13%;
+	}
+	div.open-icon {
+		top: 2%;
+		left: 0%;
+	}
+	#tabs {
+		width: 100px;
+		height: 100px;
+		display: none;
+	}
+}
+/*body {
+	padding-top: 50px;
+}*/
+div.block {
+	border-radius: 15px;
+	/*background: var(--block-color);*/
+	background-color: #90AFC5;
+	margin: 10px 10px 10px 10px;
+	box-shadow: 5px 5px 5px #888888;
+	cursor: -webkit-grab; 
+	cursor: -moz-grab;
+}
+div.block > div.grid-stack-item-content {
+	width: 100%;
+	height: 100%;
+	/*display: block;*/
+	/*margin: auto;*/
+    /*width: 50%;*/
+}
+div.block:hover > div.grid-stack-item-content > div.trash-icon {
+	opacity: 1.0;
+}
+div.block:hover > div.grid-stack-item-content > div.pen-icon {
+	opacity: 1.0;
+}
+div.block:hover > div.grid-stack-item-content > div.open-icon {
+	opacity: 1.0;
+}
+div.grid-stack-item-content > div.item {
+    /*width: 50%;*/
+    position: relative;
+	top: 50%;
+	text-align: center;
+	transform: translateY(-50%);
+	/*left: 25%;*/
+}
+
+/*div.grid-stack-item-content > div.item > input {
+	font: normal 16px verdana;
+    outline:0px !important;
+    font-weight: bold;
+	-webkit-appearance:none;
+	border:none;
+    background:transparent;
+}*/
+div.grid-stack-item-content > div.item > p {
+	font: normal 14px verdana;
+	font-weight: bold;
+}
+div.block:active {
+	cursor: -webkit-grabbing; cursor: -moz-grabbing;
+	/*left: 10px;*/
+}
+div.color_autumn {
+	background-color: #763626;
+}
+div.color_mist {
+	background-color: #90AFC5;
+}
+div.color_stone {
+	background-color: #336B87;
+}
+div.color_shadow {
+	background-color: #2A3132;
+}
+div.grid-stack {
+
+}
+nav.navbar {
+	/*background: var(--nav-color);*/
+	background-color: #2A3132;
+}
+/*a.navbar-brand {
+	color: white;
+}*/
+/*
+div.notes {
+	position: fixed;
+	width: 38%;
+	height: 100%;
+	left: 62%;
+	z-index: 10;
+}
+*/
+textarea,
+textarea:active,
+textarea:focus 
+{
+	outline:0px !important;
+	-webkit-appearance:none;
+	background: url(http://i.stack.imgur.com/ynxjD.png) repeat-y;
+	width: 100%;
+	height: 100%;
+	font: normal 14px verdana;
+	line-height: 25px;
+	padding: 2px 10px;
+	border: solid 0px #ddd;
+	z-index: 10;
+}
+

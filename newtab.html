@@ -1,0 +1,82 @@
+<!doctype html>
+<!--
+This is the newtab page opened when a user clicks on the new tab button in chrome
+ -->
+<html>
+  <head>
+    <title> Dashboard - sessionr </title>
+
+    <!--
+      - JavaScript and HTML must be in separate files: see our Content Security
+      - Policy documentation[1] for details and explanation.
+      -
+      - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
+     -->
+    <!--
+      use muuri?
+    -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/gridstack.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <!-- <link rel="stylesheet" type="text/css" href="css/jquery.webui-popover.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="css/jBox.css">
+    <link rel="stylesheet" type="text/css" href="font-awesome-4.7.0/css/font-awesome.min.css">
+  </head>
+  <body>
+    <div class="notes">
+      <div class="session-name">
+        <span></span>
+      </div>
+      <textarea></textarea>
+    </div>
+    <!-- <div class="container">
+      <div class="jumbotron"></div>
+    </div> -->
+    <div id="tabs" class="block color_mist"></div>
+    <div class="grid-stack">
+        <!-- <div id="gsi-1 block" style="width:100px;height:100px"></div> -->
+        <template id="template">
+          <div class="grid-stack-item block color_mist" 
+              data-gs-x="0" data-gs-y="0"
+              data-gs-width="3" data-gs-height="1" data-id="placeholder">
+                  <div class="grid-stack-item-content">
+                    <div class="open-icon">
+                      <i class="fa fa-folder-open fa-2x" aria-hidden="true"></i>
+                    </div>
+                    <div class="trash-icon">
+                      <i class="fa fa-trash-o fa-2x" aria-hidden="true"></i>
+                    </div>
+                    <div class="pen-icon">
+                      <i class="fa fa-pencil fa-2x" aria-hidden="true"></i>
+                    </div>
+                    <div class="item">
+                      <p></p>
+                      <!-- <input type="text" value="type name here ... "> -->
+                    </div>
+                    <!-- <p> text </p> -->
+                  </div>
+          </div>
+        </template>
+    </div>
+    <div class="plus">
+      <i class="fa fa-plus-square fa-4x" aria-hidden="true"></i>
+    </div>
+    <div class="cog">
+      <i class="fa fa-cog fa-4x" aria-hidden="true"></i>
+    </div>
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="js/lodash.min.js"></script>
+    <script type="text/javascript" src='js/gridstack.min.js'></script>
+    <script type="text/javascript" src='js/jquery-ui.min.js'></script>
+    <!-- // <script type="text/javascript" src='js/jquery.webui-popover.min.js'></script> -->
+    <script type="text/javascript" src='js/jBox.min.js'></script>
+    <script type="text/javascript" src='js/index.js'></script>
+  </body>
+</html>
+
+
+
+
