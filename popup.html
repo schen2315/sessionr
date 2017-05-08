@@ -9,19 +9,6 @@
 <html>
   <head>
     <title>sessionr</title>
-    <style>
-      body {
-        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-        font-size: 100%;
-      }
-      #status {
-        /* avoid an excessively wide status text */
-        white-space: pre;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        max-width: 400px;
-      }
-    </style>
 
     <!--
       - JavaScript and HTML must be in separate files: see our Content Security
@@ -29,9 +16,35 @@
       -
       - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
      -->
-    
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/gridstack.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <!-- <link rel="stylesheet" type="text/css" href="css/jquery.webui-popover.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="css/jBox.css">
+    <link rel="stylesheet" type="text/css" href="font-awesome-4.7.0/css/font-awesome.min.css">
   </head>
   <body>
-    <p>filler content</p>
+    
+    <div id="popup-view">
+      <p>sessionr</p>
+      <div class="save-existing">
+        <div class="floppy-icon">
+          <i class="fa fa-floppy-o fa-3x" aria-hidden="true"></i>
+        </div>
+        <p>Save Session</p>
+      </div>
+      <div class="save-new">
+        <div class="plus-icon">
+          <i class="fa fa-plus-circle fa-3x" aria-hidden="true"></i>
+        </div>
+        <p>Save New</p>
+      </div>
+    </div>
+    <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="js/lodash.min.js"></script>
+    <script type="text/javascript" src="js/popup.js"></script>
   </body>
 </html>

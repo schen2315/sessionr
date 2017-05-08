@@ -20,6 +20,10 @@ $(function () {
     /*register events*/
     $divplus.on('click', createSession);
     $grid.on('click', 'div.block', function() {
+        /*
+            change background based on the block clicked
+        */
+
         $el = $(this);
         currentSession = $el.data('id');
         $grid.find('div.block').css('left', '0px');
@@ -32,7 +36,7 @@ $(function () {
             result = result[currentSession];
             $divnotes.find('textarea').val(result.notes);    
         });
-    })
+    });
     $divnotes.keyup(function() { 
         var obj = {
             property: 'notes',
@@ -58,9 +62,16 @@ $(function () {
             }
         });
     });
-    /*
-        change background based on the block clicked
-    */
+    $grid.on('click', 'div.block>div.grid-stack-item-content>div.open-icon', function() {
+        //open new window
+        $el = $(this).parent().parent()
+        var id = $el.data('id');
+        console.log(id);
+        console.log($el);
+        openSession(id, function() {
+
+        });
+    });
 
 
     // $grid.on('keyup', 'div.block>div.grid-stack-item-content>div.item>input', hasTypeCompleted);
@@ -93,6 +104,25 @@ $(function () {
 
     }
     /*event handlers*/
+    function openSession(id, callback) {
+        chrome.storage.local.get({[id]: {}}, function(session) {
+            //set current Session in settings
+            session = session[id];
+            chrome.storage.local.get({settings: {}}, function(result) {
+                result = result.settings;
+                result.currentSession = id;
+                chrome.storage.local.set({settings: result}, function() {
+                    if(_.isEmpty(session.windows)) chrome.windows.create(callback);
+                    else {
+                        for(var i=0; i < session.windows.length; i++) {
+                            chrome.windows.create(session.windows[i]);
+                        }
+                    }
+                });
+            });
+            //console.log(session);
+        });
+    }
     function createSession() {
         console.log("called createSession");
         // console.log(template);

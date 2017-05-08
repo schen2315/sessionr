@@ -197,3 +197,56 @@ textarea:focus
 	z-index: 10;
 }
 
+div#popup-view {
+	/*position: absolute;*/
+	width: 250px;
+}
+div#popup-view > p {
+	text-align: center;
+	font: normal 18px verdana;
+	margin: 0;
+	padding: 0;
+}
+div#popup-view > div.save-existing,
+div#popup-view > div.save-new {
+	border-top: solid 1px #eee;
+	width: 100%;
+	height: 100px;
+}
+div#popup-view > div.save-existing > div.floppy-icon, 
+div#popup-view > div.save-new > div.plus-icon {
+	white-space: nowrap;
+  	/*overflow: hidden;*/
+	width: 10%;
+	margin: 0 auto;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+div#popup-view > div.save-existing > p,
+div#popup-view > div.save-new > p  {
+	position: relative;
+	top: 30%;
+	text-align: center;
+	font: normal 14px verdana;
+	margin: 0;
+	padding: 0;
+}
+div#popup-view > div.save-new {
+	background-color: #eee;
+}
+div#popup-view > div.save-existing:hover .fa,
+div#popup-view > div.save-new:hover .fa{
+	color: #489fdf;
+}
+div#popup-view > div.save-existing:hover p,
+div#popup-view > div.save-new:hover p{
+	color: #489fdf;
+}
+div#popup-view > div.save-existing:hover,
+div#popup-view > div.save-new:hover {
+	cursor: pointer;
+}
+
+
+
