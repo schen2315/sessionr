@@ -23,12 +23,20 @@ $(function () {
         $divcog = $('div.cog'),
         $divnotes = $('div.notes'),
         $grid = $('#block-view'),
-        $urlview = $('#url-view');
+        $urlview = $('#url-view'),
+        $body = $('body');
     var typeTO;
     var typeTimer = 800;
     var currentSession;
     /*register events*/
-    $divplus.on('click', function() { createSession(loadBlockView) });
+    // $body.on('click', function(event) {
+    //     event.stopPropagation();
+
+    // });
+    $divplus.on('click', function(event) {
+        event.stopPropagation();
+        createSession(loadBlockView) 
+    });
     $grid.on('click', 'div.block', function(event) {
         /*
             change background based on the block clicked
@@ -50,7 +58,8 @@ $(function () {
             });
         });
     });
-    $divnotes.keyup(function() { 
+    $divnotes.keyup(function(event) {
+        event.stopPropagation(); 
         var obj = {
             id: currentSession,
             property: 'notes',
@@ -88,7 +97,52 @@ $(function () {
     });
     $grid.on('click', 'div.block>div.grid-stack-item-content>div.pen-icon', function(event) {
         event.stopPropagation();
+        var $this = $(this);
+        $this.parent().find('div.item>p').css('display', 'none');
+        $this.parent().find('div.item>div.input-group').css('display', 'block').find('input').focus();
+        $this.parent().find('div.open-icon').css('display', 'none');
+        $this.parent().find('div.pen-icon').css('display', 'none');
+        $this.parent().find('div.trash-icon').css('display', 'none');
     })
+    $grid.on('click', 'div.block>div.grid-stack-item-content>div.item>div.input-group>span', function(event) {
+        event.stopPropagation();
+        var $this = $(this);
+        var new_name = $this.parent().find('input').val();
+        var $el = $this.parent().parent().parent().parent();
+        var id = $el.data('id');
+        var grid = $grid.data('gridstack');
+        getSession(id, function(session) {
+            if(session !== false) {
+                editSession({id: id, property: 'name', val: new_name}, function(result) {
+                    console.log(result);
+                    grid.removeWidget($el, true);
+                    loadBlockView(result);
+                })
+            }
+        });
+        //console.log(id);
+        //console.log(new_name);
+    });
+    $grid.on('keyup', 'div.block>div.grid-stack-item-content>div.item>div.input-group', function(e) {
+        e.stopPropagation();
+        if(e.keyCode == 13) {
+            console.log('pressed enter');
+            var $this = $(this).find('span');
+            var new_name = $this.parent().find('input').val();
+            var $el = $this.parent().parent().parent().parent();
+            var id = $el.data('id');
+            var grid = $grid.data('gridstack');
+            getSession(id, function(session) {
+                if(session !== false) {
+                    editSession({id: id, property: 'name', val: new_name}, function(result) {
+                        console.log(result);
+                        grid.removeWidget($el, true);
+                        loadBlockView(result);
+                    })
+                }
+            });
+        }
+    });
 
     // $grid.on('keyup', 'div.block>div.grid-stack-item-content>div.item>input', hasTypeCompleted);
     // $grid.on('mousedown', 'div.block>div.grid-stack-item-content>div.item', function(event) {
@@ -240,10 +294,10 @@ $(function () {
         })
     }
     /* take an id */
-    function editSession(obj) {
+    function editSession(obj, callback) {
         /* things to edit are name, color, dateUpdated, windows, notes */
         /* save these to the chrome local storage */
-        var id = obj.id
+        var id = obj.id;
         var property = obj.property;
         var val = obj.val;
         console.log(id);
@@ -272,9 +326,18 @@ $(function () {
             console.log(result[id]);
             result = result[id];
             result[property] = val;
+            console.log(property);
             chrome.storage.local.set({[id]: result }, function(){
                 console.log(result);
+                if(callback) callback(result);
             })
+        });
+    }
+    function getSession(id, callback) {
+        chrome.storage.local.get({[id]:{}}, function(result) {
+            result = result[id];
+            if(_.isEmpty(result)) callback(false);
+            else callback(result);
         });
     }
     function removeAllSessions() {
@@ -306,6 +369,18 @@ $(function () {
         })
     }
     function init() {
+
+        //first remove all
+        //console.log(_.isEmpty($grid));
+        // if(!_.isEmpty(windows)) {
+        //     console.log("clear");
+        //     windows.each(function() {
+        //         var grid = $(this).find('.grid').data('gridstack');
+        //         console.log($(this))
+        //         grid.removeAll();
+        //     });
+        //     $urlview.empty();
+        // }
         $grid.gridstack(block_options);
         $urlview.gridstack(url_options);
         chrome.storage.local.get({sessionids:[]}, function(result) {

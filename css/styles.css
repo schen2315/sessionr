@@ -168,9 +168,20 @@ div.grid-stack-item-content > div.item {
 	top: 50%;
 	text-align: center;
 	transform: translateY(-50%);
+	white-space: nowrap;
 	/*left: 25%;*/
 }
-
+div.grid-stack-item-content > div.item > div.input-group {
+	display: none;
+	white-space: nowrap;
+  	overflow: hidden;
+	margin: 0 auto;
+	width: 60%;
+}
+div.grid-stack-item-content > div.item > div.input-group > span:hover {
+	cursor: pointer;
+	color: #489fdf;
+}
 /*div.grid-stack-item-content > div.item > input {
 	font: normal 16px verdana;
     outline:0px !important;
@@ -291,9 +302,9 @@ div#popup-view > div.save-new:hover {
 	cursor: pointer;
 }
 div#popup-view > div.new-name > div.input-group {
-	position: absolute;
+	
 	white-space: nowrap;
-  	/*overflow: hidden;*/
+  	overflow: hidden;
 	margin: 0 auto;
 	position: relative;
 	top: 50%;
