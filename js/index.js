@@ -18,12 +18,12 @@ $(function () {
     var typeTimer = 800;
     var currentSession;
     /*register events*/
-    $divplus.on('click', createSession);
-    $grid.on('click', 'div.block', function() {
+    $divplus.on('click', function() { createSession(loadView) });
+    $grid.on('click', 'div.block', function(event) {
         /*
             change background based on the block clicked
         */
-
+        event.stopPropagation();
         $el = $(this);
         currentSession = $el.data('id');
         $grid.find('div.block').css('left', '0px');
@@ -44,8 +44,9 @@ $(function () {
         }
         hasTypeCompleted(editSession, obj);
     });
-    $grid.on('click', 'div.block>div.grid-stack-item-content>div.trash-icon', function() {
+    $grid.on('click', 'div.block>div.grid-stack-item-content>div.trash-icon', function(event) {
         /* get id from data-ref */
+        event.stopPropagation();
         var grid = $grid.data('gridstack');
         $el = $(this).parent().parent()
         var id = $el.data('id');
@@ -62,12 +63,11 @@ $(function () {
             }
         });
     });
-    $grid.on('click', 'div.block>div.grid-stack-item-content>div.open-icon', function() {
+    $grid.on('click', 'div.block>div.grid-stack-item-content>div.open-icon', function(event) {
         //open new window
+        event.stopPropagation();
         $el = $(this).parent().parent()
         var id = $el.data('id');
-        console.log(id);
-        console.log($el);
         openSession(id, function() {
 
         });
@@ -104,6 +104,7 @@ $(function () {
 
     }
     /*event handlers*/
+    /*make sure to update each object in chrome.storage.local*/
     function openSession(id, callback) {
         chrome.storage.local.get({[id]: {}}, function(session) {
             //set current Session in settings
@@ -112,10 +113,12 @@ $(function () {
                 result = result.settings;
                 result.currentSession = id;
                 chrome.storage.local.set({settings: result}, function() {
+                    //close current tab
                     if(_.isEmpty(session.windows)) chrome.windows.create(callback);
                     else {
                         for(var i=0; i < session.windows.length; i++) {
-                            chrome.windows.create(session.windows[i]);
+                            console.log(session.windows[i]);
+                            chrome.windows.create({url: session.windows[i]}, function() {});
                         }
                     }
                 });
@@ -123,7 +126,7 @@ $(function () {
             //console.log(session);
         });
     }
-    function createSession() {
+    function createSession(callback) {
         console.log("called createSession");
         // console.log(template);
         var new_id;
@@ -133,7 +136,7 @@ $(function () {
             /*handle runtime.lastError*/
             var new_session = {
                 id: new_id,
-                name: /*$el.find('div.grid-stack-item-content>div.item>input').val()*/ 'Placeholder',
+                name: /*$el.find('div.grid-stack-item-content>div.item>input').val()*/ 'New Session',
                 windows: [],
                 notes: 'type stuff here ...',
                 color: 'color_mist',
@@ -157,25 +160,34 @@ $(function () {
                 // {new_id: {}} is wrong, you want {[new_id]: {}}
                 chrome.storage.local.get({[new_id]: {}}, function(result) {
                     //console.log(result[new_id]);
-                    loadView(new_session);
+                    //call callback with new_session parameter
+                    callback(new_session);
                 })
             });
         });
     }  
     function deleteSession(id, callback) {
         //use id to delete/ remove item
-        chrome.storage.local.remove(id, function() {
-            chrome.storage.local.get({sessionids: []}, function(result) {
-                sessionids = result.sessionids;
-                for(var i=0; i < sessionids.length; i++) {
-                    if(sessionids[i] == id) {
-                        sessionids.splice(i,1);
-                        break;
-                    }
-                }
-                chrome.storage.local.set({sessionids: sessionids}, function() {
-                    callback(chrome.runtime.lastError);
-                })
+        chrome.storage.local.get({settings:{}}, function(result) {
+            result = result.settings;
+            if(result.currentSession == id) result.currentSession = null;
+            chrome.storage.local.set({settings:result}, function() {
+                /** eventually handle errors */
+                chrome.storage.local.remove(id, function() {
+                    chrome.storage.local.get({sessionids: []}, function(result) {
+                        sessionids = result.sessionids;
+                        for(var i=0; i < sessionids.length; i++) {
+                            if(sessionids[i] == id) {
+                                sessionids.splice(i,1);
+                                break;
+                            }
+                        }
+                        chrome.storage.local.set({sessionids: sessionids}, function() {
+                            callback(chrome.runtime.lastError);
+                            if(callback) callback();
+                        })
+                    });
+                });
             });
         })
     }

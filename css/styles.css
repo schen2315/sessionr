@@ -89,7 +89,7 @@ body {
 	}
 	div.open-icon {
 		top: 2%;
-		left: 0%;
+		right: 85%;	/* doing left zero takes up the width of the parent element*/
 	}
 	#tabs {
 		width: 100px;
