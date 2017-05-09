@@ -144,6 +144,127 @@ function updateCurrentSession(manual = false, callback = undefined) {
 		});
 	})
 }
-
-
-
+/* set current session */
+function setSession(id, callback) {
+	chrome.storage.local.get({[id]: {}}, function(session) {
+		session = session[id];
+		if(_.isEmpty(session)) {
+			if(callback) callback(false);
+			return;
+		}
+		chrome.storage.local.get({settings: {}}, function(result) {
+			result = result.settings;
+			result.currentSession = id;
+			console.log(result);
+			chrome.storage.local.set({settings: result}, function() {
+				if(callback) callback(true);
+			})
+		});
+	});
+}
+function getSettings(callback) {
+	chrome.storage.local.get({settings: {}}, function(result) {
+		result = result.settings;
+		callback(result);
+	})
+}
+/*
+	callback true if successful
+*/
+function editSession(obj, callback) {
+    /* things to edit are name, color, dateUpdated, windows, notes */
+    /* save these to the chrome local storage */
+    var id = obj.id
+    var property = obj.property;
+    var val = obj.val;
+    console.log(id);
+    // switch(property) {
+    //     case 'notes':
+    //     chrome.storage.local.get({[id]: {}}, function(result) {
+    //         console.log(result[id]);
+    //         result = result[id];
+    //         result.notes = val;
+    //         chrome.storage.local.set({[id]: result }, function(){
+    //             console.log(result);
+    //         })
+    //     });
+    //     case 'name':
+    //     chrome.storage.local.get({[id]: {}}, function(result) {
+    //         console.log(result[id]);
+    //         result = result[id];
+    //         result.name = val;
+    //         chrome.storage.local.set({[id]: result }, function(){
+    //             console.log(result);
+    //         })
+    //     });
+    //     break;
+    // }
+    chrome.storage.local.get({[id]: {}}, function(result) {
+        result = result[id];
+        result[property] = val;
+        console.log(result)
+        chrome.storage.local.set({[id]: result }, function(){
+            console.log(result);
+            callback(true);
+        })
+    });
+}
+/* remove copy of this function from frontend */
+function createSession(callback) {
+    console.log("called createSession");
+    // console.log(template);
+    var new_id;
+    //must be unique id
+    makeUniqueId(function(result) {
+        new_id = 'a' + result;
+        /*handle runtime.lastError*/
+        var new_session = {
+            id: new_id,
+            name: /*$el.find('div.grid-stack-item-content>div.item>input').val()*/ 'New Session',
+            windows: [],
+            notes: 'type stuff here ...',
+            color: 'color_mist',
+            created: new Date(),
+            lastUpdate: new Date()
+        }
+        var obj = {
+            [new_id]: new_session
+        }
+        chrome.storage.local.get({sessionids: []}, function(result) {
+            sessionids = result.sessionids;
+            sessionids.push(new_id);
+            chrome.storage.local.set({sessionids: sessionids}, function() {
+                chrome.storage.local.get({sessionids: []}, function(result) {
+                    console.log(result.sessionids);
+                });
+            });
+        })
+        chrome.storage.local.set(obj, function() {
+            if(chrome.runtime.lastError) console.log(chrome.runtime.lastError);
+            // {new_id: {}} is wrong, you want {[new_id]: {}}
+            chrome.storage.local.get({[new_id]: {}}, function(result) {
+                //console.log(result[new_id]);
+                //call callback with new_session parameter
+                callback(new_session);
+            });
+        });
+    });
+} 
+function _makeid() {
+	var ID_LENGTH = 10;
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var unique = false;
+    for( var i=0; i < ID_LENGTH; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text
+}
+function makeUniqueId(callback) {
+    var id = _makeid();
+    chrome.storage.local.get({[id]: {}}, function(result) {
+        console.log(_.isEmpty(result[id]));
+        if(_.isEmpty(result[id])) {
+            callback(id);
+        } else makeUniqueId(callback);
+    })
+}

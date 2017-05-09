@@ -33,10 +33,61 @@ This is the newtab page opened when a user clicks on the new tab button in chrom
     <!-- <div class="container">
       <div class="jumbotron"></div>
     </div> -->
-    <div id="tabs" class="block color_mist"></div>
-    <div class="grid-stack">
+    <div class="grid-stack" id="url-view">
+      <template id="template-window">
+        <div class="window">
+          <span></span>
+          <div class="grid grid-stack"></div>
+        </div>
+      </template>
+      <template id="template-url">
+        <div class="grid-stack-item block color_mist" 
+                data-gs-x="0" data-gs-y="0"
+                data-gs-width="3" data-gs-height="1" data-id="placeholder">
+              <div class="grid-stack-item-content">
+                <a href="#" target="_blank"></a>
+              </div>
+        </div>
+      </template>
+      <!-- <div class="window">
+        <span></span>
+        <div class="grid grid-stack">
+          <div class="grid-stack-item block color_mist" 
+                  data-gs-x="0" data-gs-y="0"
+                  data-gs-width="3" data-gs-height="1" data-id="placeholder">
+                <div class="grid-stack-item-content">
+                </div>
+          </div>
+          <div class="grid-stack-item block color_mist" 
+                  data-gs-x="0" data-gs-y="0"
+                  data-gs-width="3" data-gs-height="1" data-id="placeholder">
+                <div class="grid-stack-item-content">
+                </div>
+          </div>
+        </div> -->
+      </div>
+    <!-- <div class="grid-stack-item block color_mist" 
+                data-gs-x="0" data-gs-y="0"
+                data-gs-width="3" data-gs-height="1" data-id="placeholder">
+              <div class="grid-stack-item-content">
+              </div>
+        </div>
+    <div class="grid-stack-item block color_mist" 
+                data-gs-x="0" data-gs-y="0"
+                data-gs-width="3" data-gs-height="1" data-id="placeholder">
+              <div class="grid-stack-item-content">
+              </div>
+        </div>
+    <div class="grid-stack-item block color_mist" 
+                data-gs-x="0" data-gs-y="0"
+                data-gs-width="3" data-gs-height="1" data-id="placeholder">
+              <div class="grid-stack-item-content">
+              </div>
+        </div> -->
+    </div>
+    <div id="block-view" class="grid-stack">
         <!-- <div id="gsi-1 block" style="width:100px;height:100px"></div> -->
-        <template id="template">
+        <template id="template-block">
           <div class="grid-stack-item block color_mist" 
               data-gs-x="0" data-gs-y="0"
               data-gs-width="3" data-gs-height="1" data-id="placeholder">

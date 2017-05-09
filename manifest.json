@@ -19,7 +19,7 @@
     "newtab" : "newtab.html"
   },
   "background": {
-    "scripts": ["eventPage.js"],
+    "scripts": [ "js/lodash.min.js","eventPage.js"],
     "persistent": false
   }
 }

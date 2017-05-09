@@ -2,9 +2,18 @@ $(function () {
     /*cache*/
     //var template = '<div class="grid-stack-item block color_mist" data-gs-x="0" data-gs-y="0" data-gs-width="3" data-gs-height="1"><div class="grid-stack-item-content"></div></div>'
     var ID_LENGTH = 10;
-    var template = $('#template').html();
-    var gridstack_options = {
+    var template_block = $('#template-block').html();
+    var template_url = $('#template-url').html();
+    var template_window = $('#template-window').html();
+    var block_options = {
         cellHeight: 80,
+        disableResize: true,
+        width: 3,
+        animate: true,
+        disableOneColumnMode: true
+    }
+    var url_options = {
+        cellHeight: 30,
         disableResize: true,
         width: 3,
         animate: true,
@@ -13,12 +22,13 @@ $(function () {
     var $divplus = $('div.plus'),
         $divcog = $('div.cog'),
         $divnotes = $('div.notes'),
-        $grid = $('.grid-stack');
+        $grid = $('#block-view'),
+        $urlview = $('#url-view');
     var typeTO;
     var typeTimer = 800;
     var currentSession;
     /*register events*/
-    $divplus.on('click', function() { createSession(loadView) });
+    $divplus.on('click', function() { createSession(loadBlockView) });
     $grid.on('click', 'div.block', function(event) {
         /*
             change background based on the block clicked
@@ -28,17 +38,21 @@ $(function () {
         currentSession = $el.data('id');
         $grid.find('div.block').css('left', '0px');
         $el.animate({left: '20px'}, 5, 'linear');
-        $divnotes.animate({width: '400px'}, 'fast', function() {
-            /*get the el's name here*/
-            $divnotes.find('span').text($el.data('id'));
-        });
         chrome.storage.local.get({[currentSession]: {}}, function(result) {
             result = result[currentSession];
-            $divnotes.find('textarea').val(result.notes);    
+            $divnotes.find('textarea').val(result.notes);   
+            $divnotes.animate({width: '400px'}, 'fast', function() {
+                /*get the el's name here*/
+                $divnotes.find('span').text(result.name);
+            }); 
+            loadUrlView(result, function() {
+                 // $urlview.animate({right:'400px'}, "fast");   
+            });
         });
     });
     $divnotes.keyup(function() { 
         var obj = {
+            id: currentSession,
             property: 'notes',
             val: $divnotes.find('textarea').val()
         }
@@ -72,7 +86,9 @@ $(function () {
 
         });
     });
-
+    $grid.on('click', 'div.block>div.grid-stack-item-content>div.pen-icon', function(event) {
+        event.stopPropagation();
+    })
 
     // $grid.on('keyup', 'div.block>div.grid-stack-item-content>div.item>input', hasTypeCompleted);
     // $grid.on('mousedown', 'div.block>div.grid-stack-item-content>div.item', function(event) {
@@ -84,24 +100,56 @@ $(function () {
     /*get all session objects and load them in*/
     init();
 
-    function loadView(object) {
+    function loadBlockView(object) {
         var grid = $grid.data('gridstack');
-        var $el = $(template);
+        var $el = $(template_block);
         $grid.append($el);
         grid.makeWidget($el);
         //$el.find("input").focus().val(object.id)
-        $el.find("p").text(object.id);
+        $el.find("p").text(object.name);
         $el.data("id", object.id);
         //load notes
         //title
         $divnotes.animate({width: '400px'}, 'fast', function() {
             /*get the el's name here*/
-            $divnotes.find('span').text($el.data('id'));
+            $divnotes.find('span').text(object.name);
             $divnotes.find('textarea').val(object.notes);
             console.log(object.notes);
         });
         /*change stuff in notes section to match*/
 
+    }
+    /* also take a session object */
+    function loadUrlView(object, callback) {
+        var windows = $urlview.find('div.window');
+        //first remove all
+        console.log(_.isEmpty(windows));
+        if(!_.isEmpty(windows)) {
+            console.log("clear");
+            windows.each(function() {
+                var grid = $(this).find('.grid').data('gridstack');
+                console.log($(this))
+                grid.removeAll();
+            });
+            $urlview.empty();
+        }
+        for(var i=0; i < object.windows.length; i++) {
+            var $wi = $(template_window);
+            $wi.find('span').text("Window " + (i+1));
+            $urlview.append($wi);
+            $wi.find('.grid').gridstack(url_options);
+            var grid = $wi.find('.grid').data('gridstack');
+            console.log(object.windows[i].length);
+            for(var j=0; j < object.windows[i].length; j++) {
+                var $el = $(template_url);
+                $el.find('a').text(object.windows[i][j])
+                $el.find('a').attr('href', object.windows[i][j]);
+                // console.log($el);
+                $wi.find('.grid').append($el);
+                grid.makeWidget($el);
+            }
+        }
+        callback();
     }
     /*event handlers*/
     /*make sure to update each object in chrome.storage.local*/
@@ -128,7 +176,7 @@ $(function () {
     }
     function createSession(callback) {
         console.log("called createSession");
-        // console.log(template);
+        // console.log(template_block);
         var new_id;
         //must be unique id
         makeUniqueId(function(result) {
@@ -192,25 +240,42 @@ $(function () {
         })
     }
     /* take an id */
-    //
     function editSession(obj) {
         /* things to edit are name, color, dateUpdated, windows, notes */
         /* save these to the chrome local storage */
+        var id = obj.id
         var property = obj.property;
         var val = obj.val;
-        console.log(currentSession);
-        switch(property) {
-            case 'notes':
-            chrome.storage.local.get({[currentSession]: {}}, function(result) {
-                console.log(result[currentSession]);
-                result = result[currentSession];
-                result.notes = val;
-                chrome.storage.local.set({[currentSession]: result }, function(){
-                    console.log(result);
-                })
-            });
-            break;
-        }
+        console.log(id);
+        // switch(property) {
+        //     case 'notes':
+        //     chrome.storage.local.get({[id]: {}}, function(result) {
+        //         console.log(result[id]);
+        //         result = result[id];
+        //         result.notes = val;
+        //         chrome.storage.local.set({[id]: result }, function(){
+        //             console.log(result);
+        //         })
+        //     });
+        //     case 'name':
+        //     chrome.storage.local.get({[id]: {}}, function(result) {
+        //         console.log(result[id]);
+        //         result = result[id];
+        //         result.name = val;
+        //         chrome.storage.local.set({[id]: result }, function(){
+        //             console.log(result);
+        //         })
+        //     });
+        //     break;
+        // }
+        chrome.storage.local.get({[id]: {}}, function(result) {
+            console.log(result[id]);
+            result = result[id];
+            result[property] = val;
+            chrome.storage.local.set({[id]: result }, function(){
+                console.log(result);
+            })
+        });
     }
     function removeAllSessions() {
         chrome.storage.local.clear(function() {
@@ -241,7 +306,8 @@ $(function () {
         })
     }
     function init() {
-        $grid.gridstack(gridstack_options);
+        $grid.gridstack(block_options);
+        $urlview.gridstack(url_options);
         chrome.storage.local.get({sessionids:[]}, function(result) {
             sessionids = result.sessionids;
             for(var i=0; i < sessionids.length; i++) {
@@ -249,7 +315,7 @@ $(function () {
                      for (var property in result) {
                         if (result.hasOwnProperty(property)) {
                             //console.log(result[property]);
-                            loadView(result[property]);
+                            loadBlockView(result[property]);
                         }
                     }
                 });
