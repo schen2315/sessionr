@@ -3,7 +3,7 @@
 https://chrome.google.com/webstore/detail/sessionr/olepjcipnaalkakoghkhiolhhaoceagm
 Description:
 
-![Dashboard] (/images/screenshot.jpg)
+![Dashboard](/images/screenshot.jpg)
 
 * Having trouble managing your chrome sessions? Having trouble keeping track of your projects? Install sessionr and easily create, track, and manage your chrome sessions! Any and all feedback is welcome!
 * Open a new tab to view the dashboard
